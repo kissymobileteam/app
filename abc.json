@@ -1,13 +1,14 @@
 {
     "name": "app",
-    "version": "1.9",
-    "desc": "请修改组件描述",
+    "version": "1.3",
+    "desc": "",
     "cover": "",
+    "tag":"",
     "author": {
         "name": "bachi@taobao.com",
         "email": "bachi@taobao.com",
-        "page": "请修改作者个人首页"
+        "page": ""
     },
-    "type": "kissy-pie",
-    "type-url": "http://abc.alibaba-inc.com/r/kissy-pie"
+    "type": "kissy-gallery",
+    "type-url": "http://gallery.kissyui.com/guide"
 }
