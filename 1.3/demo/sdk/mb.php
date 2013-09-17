@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="assets/bootstrap.css" />
 	<link rel="stylesheet" href="assets/tbh5v0.css" />
 	<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy.js"></script>
-	<script src="../../../../sdk-h5/1.0/index.js" type="text/javascript"></script>
+	<script src="http://mobile.kissyui.com/mobile/sdk-h5/1.0/index.js" type="text/javascript"></script>
 </head>
 <body>
 <style>

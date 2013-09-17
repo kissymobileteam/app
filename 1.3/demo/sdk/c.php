@@ -14,7 +14,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<link rel="stylesheet" href="assets/bootstrap.css" />
 	<link rel="stylesheet" href="assets/tbh5v0.css" />
-	<script src="../../../../sdk-h4/1.0/index.js" type="text/javascript"></script>
+	<script src="http://mobile.kissyui.com/mobile/sdk-h4/1.0/index.js" type="text/javascript"></script>
 </head>
 <body>
 <!--kdk{{-->

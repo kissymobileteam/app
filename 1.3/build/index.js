@@ -1,13 +1,13 @@
 /*
 combined files : 
 
-mobile/app/1.3/util
+gallery/app/1.3/util
 mobile/app/1.3/kissy2yui
-mobile/app/1.3/slide
-mobile/app/1.3/index
+gallery/app/1.3/slide
+gallery/app/1.3/index
 
 */
-KISSY.add('mobile/app/1.3/util',function(S){
+KISSY.add('gallery/app/1.3/util',function(S){
 
 	"use strict";
 
@@ -271,7 +271,7 @@ KISSY.add('mobile/app/1.3/kissy2yui',function(S){
 
 /*jshint smarttabs:true,browser:true,devel:true,sub:true,evil:true */
 
-KISSY.add("mobile/app/1.3/slide",function(S){
+KISSY.add("gallery/app/1.3/slide",function(S){
 
 	"use strict";
 
@@ -1908,7 +1908,7 @@ KISSY.add("mobile/app/1.3/slide",function(S){
 
 /*jshint smarttabs:true,browser:true,devel:true,sub:true,evil:true */
 
-KISSY.add("mobile/app/1.3/index", function (S,Slide) {
+KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 
 	// Jayli TODO: Android下未完全测试
 
@@ -2617,6 +2617,10 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 				var state = self.get('signet');
 				var level = 0;
 				var viewpath = decodeURIComponent(S.getHash()['viewpath']);
+
+				if(viewpath === undefined || viewpath === 'undefined'){
+					viewpath = state.lastviewpath;
+				}
 
 				self.set('viewpath',viewpath);
 

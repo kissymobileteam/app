@@ -8,7 +8,7 @@
 
 /*jshint smarttabs:true,browser:true,devel:true,sub:true,evil:true */
 
-KISSY.add("mobile/app/1.3/index", function (S,Slide) {
+KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 
 	// Jayli TODO: Android下未完全测试
 
@@ -717,6 +717,10 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 				var state = self.get('signet');
 				var level = 0;
 				var viewpath = decodeURIComponent(S.getHash()['viewpath']);
+
+				if(viewpath === undefined || viewpath === 'undefined'){
+					viewpath = state.lastviewpath;
+				}
 
 				self.set('viewpath',viewpath);
 
