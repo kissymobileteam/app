@@ -3335,8 +3335,8 @@ KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 }, {
 	requires: [
 		'./slide',
-		'base',
-		'ajax'
+		'ajax',
+		'base'
 	]
 });
 

@@ -1,14 +1,13 @@
 ![](http://img04.taobaocdn.com/tps/i4/T1IuoMXgNaXXaZVCTS-300-100.png)
 
 > Kissy Mobile App Toolkit 是一款实现web页面应用化的框架，可以快速完成"应用化"的web页面搭建
-> 除了专场动画的AppFramework之外，1.2版还提供一套SDK规范，用以将你的页面运行于Native环境
+> 除了专场动画的AppFramework之外，1.3 版还提供一套SDK规范，用以将你的页面运行于Native环境
 
 扩展阅读：
 
 - 全面介绍：<https://speakerdeck.com/lijing00333/kissy-mobile>
 - 第一版App：[MSlide](https://github.com/zhenn/mslide)
-
-- Version 1.2
+- Version 1.3
 - Author 拔赤
 - Update 2013-05-15
 - [Demo with SDK](../demo/sdk/demo.html)，[Source](https://github.com/kissyteam/kissy-mobile/tree/master/mobile/app/1.2/demo/sdk)
@@ -18,7 +17,7 @@
 
 ## 使用场景
 
-多页应用实现原理，[参照这里](history.html)。
+实现原理：[参照这里](history.html)。
 
 页面之间的切换是通过监听hashchange来实现的，如果冠以sdk，则监听通过sdk完成，Mobile App Toolkit不监听。最终触发跳转行为都是通过函数调用来完成。
 
@@ -186,6 +185,8 @@ teardown -> destroy
 
 这种场景只有在给AppFramework配置了`forcereload:false`时才有可能出现，即当Mobile App Toolkit被配置为只保留当前视口内的页面，视口范围外的页面均被销毁时，此外是不需要考虑这种场景的。
 
+![](http://img03.taobaocdn.com/tps/i3/T1TYQGXlxcXXbu1N2d-351-311.png)
+
 ### 页面的缓存
 
 页面默认是以异步形式加载进来的，加载过的页面可以缓存在本地，二次划入时不需重新加载，给AppFramework配置参数`pagecache:true`即可，该参数默认为`false`。
@@ -195,6 +196,8 @@ teardown -> destroy
 整套历史记录管理机制依赖HTML5的History特性，因此整套机制不支持IE8及以下版本，在Android 4.2 及以下版本中由于不支持H5的History，因此采用了简化的实现，即只处理了单层的前进后退。如果需要夸级别后退，需要自行管理app.MS.AndroidHis对象，改对象记录当前状态下曾经访问过的页面，只要回退到访问过的页面，都认为是从左侧划入视口。
 
 比如：有这样的访问路径，`a->b->c<-a`后，节点为`a->b->a`，这时需要手动清空`AppFramework.AndroidHis = {}`。Android 4.2 以下的后退时scrollTop复原的操作，需要开发者自行添加（框架不知道是否是后退还是人为）。
+
+节点重复、缓存等的实现原理：[参照这里](history.html)。
 
 <hr class="smooth large" />
 
@@ -212,7 +215,7 @@ teardown -> destroy
 
 ### 上下文
 
-	KISSY.use('mobile/app/1.2/',function(S,AppFramework){
+	KISSY.use('mobile/app/1.3/',function(S,AppFramework){
 
 		// 上下文1
 
