@@ -147,7 +147,7 @@ KISSY.add('gallery/app/1.3/util',function(S){
 },{
 	requires:[
 		'node',
-		'sizzle',
+		//'sizzle',
 		'json',
 		'uri'
 	]	
