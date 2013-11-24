@@ -2,7 +2,7 @@
 combined files : 
 
 gallery/app/1.3/util
-mobile/app/1.3/kissy2yui
+gallery/app/1.3/kissy2yui
 gallery/app/1.3/slide
 gallery/app/1.3/index
 
@@ -164,7 +164,7 @@ KISSY.add('gallery/app/1.3/util',function(S){
 
 /*jshint browser:true,devel:true */
 
-KISSY.add('mobile/app/1.3/kissy2yui',function(S){
+KISSY.add('gallery/app/1.3/kissy2yui',function(S){
 
 	// "use strict";
 
