@@ -9,12 +9,17 @@
 	<meta charset="UTF-8">
 	<title></title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-	<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy.js"></script>
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<link rel="stylesheet" href="assets/bootstrap.css" />
 	<link rel="stylesheet" href="assets/tbh5v0.css" />
-	<script src="http://mobile.kissyui.com/mobile/sdk-h4/1.0/index.js" type="text/javascript"></script>
+	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/??seed-min.js"></script> 
+	<!--KISSY 1.4.0 没有 kissy.js 因此需要将KISSY.use('node')需要的js载入进来，提供给h4.js使用-->
+	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/??node.js,dom/base.js,event/dom/base.js,event/base.js,event/dom/shake.js,event/dom/focusin.js,anim.js,anim/base.js,promise.js,anim/timer.js,anim/transition.js,io.js,event/custom.js,event.js"></script>
+	<script>
+		KISSY.require('node');
+	</script>
+	<script src="h4.js" type="text/javascript"></script>
 	<script>
 		// var MC = new M_Client('Android_Bridge');
 		// Android 、ios 里带上这一句，单页面带上h4-sdk.js，H5框架带上h5-sdk.js
@@ -114,7 +119,7 @@ var_dump($_POST);
 	Host.set_browser_title('页面2');
 	Host.set_back(true);
 
-	KISSY.use('mobile/app/1.2/',function(S,MS){
+	KISSY.use('gallery/app/1.4/',function(S,MS){
 
 		S.one('title').html('本页的title');
 		
