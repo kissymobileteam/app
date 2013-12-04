@@ -519,6 +519,8 @@ back如果涉及到新页面的加载，则以get方式载入
 - How：[sdk-h5.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h5.js)，[sdk-h4.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h4.js)，（参考）
 - Why：让H5页面在不修改和少修改情况下，就可以运行于浏览器和Native环境中。
 
+注意：SDK 是一种思路，不是最终解决方案。
+
 三种典型的场景：
 
 - 单页面，运行于浏览器环境，可以是iphone和android里的浏览器，类似传统的wap页
