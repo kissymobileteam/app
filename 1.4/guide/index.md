@@ -1,4 +1,3 @@
-<!--![](http://img04.taobaocdn.com/tps/i4/T1IuoMXgNaXXaZVCTS-300-100.png) -->
 ![](http://gtms01.alicdn.com/tps/i1/T1qDUCFfpaXXczH7HO-400-74.png)
 
 > Kissy Mobile App Toolkit 是一款实现web页面应用化的框架，可以快速完成"应用化"的web页面搭建
