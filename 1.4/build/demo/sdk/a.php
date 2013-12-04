@@ -10,7 +10,12 @@
 	<title></title>
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	 <script src="http://g.tbcdn.cn/kissy/k/1.4.0/??seed-min.js,node-min.js"></script> 
+	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/??seed-min.js"></script> 
+	<!--KISSY 1.4.0 没有 kissy.js 因此需要将KISSY.use('node')需要的js载入进来，提供给h4.js使用-->
+	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/??node.js,dom/base.js,event/dom/base.js,event/base.js,event/dom/shake.js,event/dom/focusin.js,anim.js,anim/base.js,promise.js,anim/timer.js,anim/transition.js,io.js,event/custom.js,event.js"></script>
+	<script>
+		KISSY.require('node');
+	</script>
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<link rel="stylesheet" href="assets/bootstrap.css" />
@@ -19,7 +24,6 @@
 	<script>
 		// var MC = new M_Client('Android_Bridge');
 		// Android 、ios 里带上这一句，单页面带上h4-sdk.js，H5框架带上h5-sdk.js
-		S.use('node');
 	</script>
 </head>
 <body>
@@ -141,10 +145,10 @@ Host.set_back();
 <!--页面全尺寸的占位符-->
 <div class="J-placeholder"></div>
 
-<script src="http://lab.cubiq.org/iscroll/src/iscroll.js" type="text/javascript"></script>
+<script src="iscroll.js" type="text/javascript"></script>
 <script>
 
-	KISSY.use('gallery/app/1.4/',function(S,AppFramwork){
+	KISSY.use('gallery/app/1.4/,gallery/iscroll-lite/1.0/,node',function(S,AppFramwork,iScroll){
 
 		var widthIscroll = false;
 
@@ -153,7 +157,6 @@ Host.set_back();
 		if(!S.isUndefined(t)){
 			widthIscroll = true;
 		}
-
 
 		var initIscroll = function(){
 

@@ -31,7 +31,6 @@
 	<link rel="stylesheet" href="assets/bootstrap.css" />
 	<link rel="stylesheet" href="assets/tbh5v0.css" />
 	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/seed.js" type="text/javascript"></script>
-<script src="http://g.tbcdn.cn/kissy/k/1.4.0/??node.js,dom/base.js,event/dom/base.js,event/base.js,event/dom/shake.js,event/dom/focusin.js,anim.js,anim/base.js,promise.js,anim/timer.js,anim/transition.js,io.js,event/custom.js,event.js"></script>
 	<script src="h5.js" type="text/javascript"></script>
 <script>
 </script>

@@ -48,7 +48,7 @@ KISSY.add(function (S,Slide) {
 			value: 'none'  // none,next,prev
 		},
 		anim:{
-			value: true
+			value: 'hSlide' 
 		},
 		dataload:{
 			value: 'true'
@@ -246,7 +246,7 @@ KISSY.add(function (S,Slide) {
 				self.slide = new Slide('MS',{
 					easing:'easeBoth',
 					autoSlide:false,
-					effect:self.get('anim')?'hSlide':'none',
+					effect:self.get('anim'),
 					touchmove:false,
 					adaptive_fixed_width:true,
 					contentClass:'MS-con',
@@ -299,8 +299,8 @@ KISSY.add(function (S,Slide) {
 			var self = this;
 			var k = self.get('viewpath');
 			if(!S.isObject(this.MS.STORAGE[k])){
-				var myClass = function(){};
-				var myClass = S.Base.extend(myClass,S.Base);
+				// var myClass = function(){};
+				var myClass = S.Base.extend();
 				/*
 				S.augment(myClass,S.Base.Attribute,S.EventTarget);
 				*/
@@ -707,8 +707,8 @@ KISSY.add(function (S,Slide) {
 					} else if (dir === 'forward') {
 						self.forward(path , param);	
 					} else {
-						// self.setRouteHash(path , param);
-						self.next(path,param);
+						self.setRouteHash(path , param);
+						// self.next(path,param);
 					}
 					// self.next(path);
 				}
@@ -1430,8 +1430,6 @@ KISSY.add(function (S,Slide) {
 			if(!self.slide){
 				return;
 			}
-
-
 		}
 	});
 
@@ -1442,7 +1440,7 @@ KISSY.add(function (S,Slide) {
 }, {
 	requires: [
 		'./slide',
-		'ajax',
+		'io',
 		'base'
 	]
 });

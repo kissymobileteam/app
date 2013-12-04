@@ -98,7 +98,7 @@
 	</div>
 </div>
 <script>
-KISSY.use('gallery/app/1.4/',function(S,AppFramework){
+KISSY.use('gallery/app/1.4/,node',function(S,AppFramework){
 	var Nav;
 	AppFramework.startup(function(){
 		Nav = this.get('page').one('.J-top-nav');

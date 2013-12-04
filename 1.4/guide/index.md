@@ -1,17 +1,19 @@
 ![](http://img04.taobaocdn.com/tps/i4/T1IuoMXgNaXXaZVCTS-300-100.png)
 
 > Kissy Mobile App Toolkit 是一款实现web页面应用化的框架，可以快速完成"应用化"的web页面搭建
-> 除了专场动画的AppFramework之外，1.3 版还提供一套SDK规范，用以将你的页面运行于Native环境
+> 除了专场动画的AppFramework之外，1.4 版还提供一套SDK规范，用以将你的页面运行于Native环境
 
 扩展阅读：
 
-- 全面介绍：<https://speakerdeck.com/lijing00333/kissy-mobile>
-- 第一版App：[MSlide](https://github.com/zhenn/mslide)
-- Version 1.3
+- Version 1.4
 - Author 拔赤
-- Update 2013-05-15
-- [Demo with SDK](../demo/sdk/demo.html)，[Source](https://github.com/kissyteam/kissy-mobile/tree/master/mobile/app/1.2/demo/sdk)
-- [Demo](../demo/simple/mb.html)
+- 全面介绍：<https://speakerdeck.com/lijing00333/kissy-mobile-app-toolkit>
+- 第一版App：[MSlide](https://github.com/zhenn/mslide)
+- <del>第二版</del>，废弃，`mobile/1.2/`
+- [第三版](http://gallery.kissyui.com/app/1.3/guide/index.html)
+- Update 2013-12-05
+- [Demo with SDK](../demo/sdk/demo.html)，[Source](https://github.com/jayli/app/tree/master/1.4/demo/sdk)
+- [Simple Demo](../demo/simple/mb.html)
 
 <hr class="smooth large" />
 
@@ -19,16 +21,17 @@
 
 实现原理：[参照这里](history.html)。
 
-页面之间的切换是通过监听hashchange来实现的，如果冠以sdk，则监听通过sdk完成，Mobile App Toolkit不监听。最终触发跳转行为都是通过函数调用来完成。
+<strong>基于KISSY 1.4.x</strong>
 
-单个页面是一个独立的html片段，包含普通页面应当包含的所有特征，页面中的富应用交由页面开发者负责，包括模板、样式、初始化等。
+页面之间的切换是通过监听hashchange来实现的，如果带上sdk，则监听通过sdk完成，App 不监听view中的点击事件。最终触发跳转行为都是通过函数调用来完成。单个页面是一个独立的html片段，包含普通页面应当包含的所有特征，页面中的富应用交由页面开发者负责，包括模板、样式、初始化等。
 
 View的行为：
 
 ![](http://img02.taobaocdn.com/tps/i2/T1P7wFXXBeXXba_uLI-504-409.png)
 
+因此要区分“框架”和“view”。
 
-### 框架初始化
+### 全局框架初始化
 
 页面样式需要自行引入，页面正文都需要添加HTML代码：
 
@@ -64,7 +67,7 @@ View的行为：
 
 JavaScript:
 
-	KISSY.use('gallery/app/1.3/',function(S,AppFramework){
+	KISSY.use('gallery/app/1.4/',function(S,AppFramework){
 
 		"use strict";
 
@@ -150,13 +153,12 @@ JavaScript:
 </tr>
 </table>
 
-样例：
+view 中的代码样例：
 
-	<script src="kissy.js" /><!--kissy 种子文件-->
-	<script src="sdk/h4.js" /><!--sdk文件（单页面）-->
+	<script src="seed.js" /><!--kissy 种子文件-->
 	...
 	<script>
-		KISSY.use('gallery/app/1.3/',function(S,AppFramework){
+		KISSY.use('gallery/app/1.4/',function(S,AppFramework){
 
 			// 页面加载时执行
 			AppFramework.startup(function(){
@@ -199,9 +201,13 @@ teardown -> destroy
 
 节点重复、缓存等的实现原理：[参照这里](history.html)。
 
+### 异步载入的页面（view）里的js执行顺序
+
+由于view是通过Ajax载入的，view中如果有外联js（文件），将不会被阻塞执行，因此要尽可能使用KISSY Loader来载入view中外联JS。
+
 <hr class="smooth large" />
 
-## Mobile App Toolkit 使用方法
+## Mobile App 使用方法
 
 ### 单页场景和多页场景在网页内容上的交集
 
@@ -213,9 +219,9 @@ teardown -> destroy
 
 <hr class="smooth" />
 
-### 上下文
+### view 里的上下文
 
-	KISSY.use('mobile/app/1.3/',function(S,AppFramework){
+	KISSY.use('mobile/app/1.4/',function(S,AppFramework){
 
 		// 上下文1
 
@@ -225,6 +231,8 @@ teardown -> destroy
 			app.forward();
 			app.back();
 			app...
+
+			app.on('eventType',/*callback*/);
 
 			// 上下文2
 		});
@@ -242,9 +250,12 @@ teardown -> destroy
 		});
 	});
 
-上下文1为KISSY默认上下文，AppFramework为当前框架（app）的构造函数。
+上下文说明：
 
-上下文2为当前框架的实例（App）（注意，不是页面）。上下文2中常用的方法为：
+- 上下文1为KISSY默认上下文，AppFramework为当前框架（app）的构造函数。
+- 上下文2为当前框架的实例（App）（注意，不是页面）。上下文2中常用的方法为：
+
+上下文2中的常用参量：
 
 - app.get('page') // 得到当前页面的DOM根节点
 - app.get('viewpath') // 得到当前页面对应的url片段，相当于页面的key
@@ -256,15 +267,42 @@ hash中只有一个参数`viewpath`指定当前视口所位于的页面相对路
 
 ### 跳转行为的触发
 
-App Toolkit提供两种触发页面跳转的方法，一类是通过监听`hashchange`，即只要hash有修改，KDK就会去hash中寻找新的`viewpath`参数，异步加载并处理滑动方向。因此`history.back()`是可以触发hashchange的，进而可以触发页面的跳转。
+App 提供两种触发页面跳转的方法，一类是通过监听`hashchange`，即只要hash有修改，App 就会去hash中寻找新的`viewpath`参数，异步加载并处理滑动方向。因此`history.back()`是可以触发hashchange的，进而可以触发页面的跳转。
 
 第二种触发页面跳转的方法是通过方法调用，有两个方法可以调用，`App.back()`和`App.forward()`，可以传参，传入的参数在目标页面的`startup`函数回调中可以拿到，给出要跳转的地址，两个方法分别是划出动作和划入动作。
 
 <hr class="smooth" />
 
-## Mobile App Toolkit API
+## APIs
 
-App Toolkit提供一个全局构造函数`AppFramework`，类似`YUI`，用来生成app实例，理论上一个应用有一个app实例，`AppFramework`挂有一些全局静态方法，整个浏览器生命周期内，只能构造一次，`var app = new AppFramework({});`。`app`实例可以通过`AppFramework.APP`来引用到，如果多次创建app实例，则AppFramework.APP会被覆盖。`app`实例提供事件，但事件注册机制只是用方法来完成（比如AppFramework.destroy(callback)）。因为页面页面之间的关系理论上是平行的，原则上，一个页面无法知晓其他页面的存在，因此一个页面中的逻辑不能“主动”绑定其他页面的事件，只能绑定本页的事件，本页的事件为了避免多次绑定带来的代码冲突，只提供了通过方法来注册事件，而非app.on('eventType')的形式。
+App 提供一个全局构造函数`AppFramework`，类似`YUI`，用来生成app实例，理论上一个应用有一个app实例，`AppFramework`挂有一些全局静态方法，整个浏览器生命周期内，只能构造一次，`var app = new AppFramework({});`。`app`实例可以通过`AppFramework.APP`来引用到，如果多次创建app实例，则AppFramework.APP会被覆盖。`app`实例提供事件，但事件注册机制只是用方法来完成（比如AppFramework.destroy(callback)）。因为页面页面之间的关系理论上是平行的，原则上，一个页面无法知晓其他页面的存在，因此一个页面中的逻辑不能“主动”绑定其他页面的事件，只能绑定本页的事件，本页的事件为了避免多次绑定带来的代码冲突，只提供了通过方法来注册事件，而非app.on('eventType')的形式。
+
+框架初始化代码：
+
+	KISSY.use('gallery/app/1.4/',function(S,AppFramwork){
+		var app = AppFramwork({
+			// 参数列表
+		});
+	});
+
+view 初始化代码：
+
+	KISSY.use('gallery/app/1.4/',function(S,AppFramwork){
+		AppFramework.startup(function(data){
+			var app = this;
+			app.on('eventType',/*callback*/);
+		});
+
+		AppFramework.teardown(function(){
+		});
+
+		AppFramework.includeOnce(function(){
+		});
+
+		AppFramework.destroy(function(){
+		});
+	});
+
 
 ### 全局静态方法
 
@@ -316,9 +354,9 @@ callback 为回调函数，注册当前页面中的`destroy`事件的句柄，�
 
 不需要在初始化时传入，用来获得当前视口总的页面容器的Node节点。
 
-*anim* (Boolean)
+*anim* (String)
 
-是否开启动画，true为开启，false为不开启，默认为开启
+动画样式，默认为`hSlide`，一般不需要设置此值
 
 *basepath* (String)
 
@@ -478,7 +516,7 @@ back如果涉及到新页面的加载，则以get方式载入
 ## SDK
 
 - What：SDK 是对AppFramework的封装，提供一些典型的方法调用，实现了更加通用的view。这种view被设计运行于三种典型场景
-- How：[sdk-h5.js](http://a.tbcdn.cn/s/kissy/mobile/sdk-h5/1.0/index.js)，[sdk-h4.js](http://a.tbcdn.cn/s/kissy/mobile/sdk-h4/1.0/index.js)
+- How：[sdk-h5.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h5.js)，[sdk-h4.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h4.js)，（参考）
 - Why：让H5页面在不修改和少修改情况下，就可以运行于浏览器和Native环境中。
 
 三种典型的场景：
@@ -550,13 +588,13 @@ SDK引用地址：
 
 `sdk-h4`
 
-	http://a.tbcdn.cn/s/kissy/mobile/sdk-h4/1.0/index-min.js
+	http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h4.js
 
 `sdk-h5`
 
-	http://a.tbcdn.cn/s/kissy/mobile/sdk-h5/1.0/index-min.js
+	http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h5.js
 
-用法：在单页面中需要引入`sdk-h4.js`，[参照代码](https://github.com/kissyteam/kissy-mobile/blob/master/mobile/app/1.2/demo/sdk/a.php)。在框架页首页中需要引入`sdk-h5.js`。[参照代码](https://github.com/kissyteam/kissy-mobile/blob/master/mobile/app/1.2/demo/sdk/mb.php)。
+用法：在单页面中需要引入`sdk-h4.js`，[参照代码](https://github.com/jayli/app/blob/master/1.4/demo/sdk/a.php)。在框架页首页中需要引入`sdk-h5.js`。[参照代码](https://github.com/jayli/app/blob/master/1.4/demo/sdk/mb.php)。
 
 ### SDK对A标签的监听
 
@@ -612,12 +650,9 @@ SDK提供全局对象App和Host，App即AppFramework的实例，Host是SDK包含
 
 <hr class="smooth large" />
 
-## Changelog
+## 1.4 Changelog
 
-- MS.startup/ready/teardown 的沙箱特性
-- view的autoHeight的bugfix
-- 配合iscroll执行的代码
-- SDK和AppFramework的解偶和分层
-- SDK的设计与实现（第一版）
-
-以上
+- 支持KISSY 1.4.x
+- 代码体积9.7k减少到7.6k
+- iScroll 依赖方式的bugfix
+- anim 参数由布尔值变更为字符串

@@ -171,54 +171,13 @@ KISSY.add('gallery/app/1.4/kissy2yui',function(S){
 	// KISSY 2 YUI3
 	S.augment(S.Node,{
 
-		_delegate:function(){
-			var self = this;
-			if(S.isFunction(arguments[1])){
-				self.delegate(arguments[0],arguments[2],arguments[1]);
-			}else {
-				self.delegate.apply(self,arguments);
-			}
-			return self;
-		},
-
-		// IndexOf 原生节点
-		indexOf : function(node){
-			var self = this;
-			if(S.isUndefined(node)){
-				return null;
-			}
-			if(node[0]){
-				node = node[0];
-			}
-			var i = 0;
-			self.each(function(el,index){
-				if(el[0] === node){
-					i = index;
-				}
-			});
-			return i;
-
-		},
-		
 		size:function(){
 			return this.length;
-		},
-
-		set:function(k,v){
-			if(k === 'innerHTML') {
-				this.html(v);
-			} else {
-				this.attr(k,v);
-			}
-			return this;
 		},
 
 		get : function(k){
 			var self = this;
 			var o = {
-				'innerHTML':function(){
-					return self.html();
-				},
 				'region':function(){
 					return {
 						'height':self.height(),
@@ -232,29 +191,7 @@ KISSY.add('gallery/app/1.4/kissy2yui',function(S){
 			}
 		},
 
-		appendChild:function(){
-			this.append.apply(this,arguments);
-			return this;
-		},
-		
-		setStyle : function(k,v){
-			this.css.apply(this,arguments);
-			return this;
-		},
-		
-		setStyles: function(o){
-			this.css.apply(this,arguments);
-			return this;
-		},
-
-		cloneNode: function(){
-			return this.clone.apply(this,arguments);
-		}
 	});
-
-	S.Node.create = function(str){
-		return S.Node(str);
-	};
 
 },{
 	requires:['node','event']
@@ -290,11 +227,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		this.init.apply(this,arguments);
 	};
 
-	// TODO 抽离切换“机制”和实现的方法
-	BSlide.plug = function(fn){
-
-	};
-
 	// 扩充BSlide
 	S.augment(BSlide,S.Event.Target,{
 
@@ -323,33 +255,7 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			//绑定事件
 			self.bindEvent();
 			
-			// TODO:这句话永远无法触发ready事件
-			self.fire('ready',{
-				index:0,
-				navnode:self.tabs.item(0),
-				pannelnode:self.pannels.item(0)
-			});
-
-			if(self.reverse){
-				var _t ;
-				_t = self.previous;
-				self.previous = self.next;
-				self.next = _t;
-			}
-
-			// 在移动终端中的优化
-			if(self.carousel){
-				for(var i = 0;i<self.colspan;i++){
-					self.fix_for_transition_when_carousel(i*2);
-				}
-			}
-
 			self.fixSlideSize();
-
-			// LayerSlide 效果增强
-			if(self.layerSlide){
-				self.initLayer();
-			}
 
 			return this;
 		},
@@ -369,22 +275,12 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			var reHandleSize = {
 				'none':function(){
 				},
-				'vSlide':function(){
-					//统一容器和item的宽高及选中默认值
-					var animconRegion = self.animcon.get('region');
-					self.animwrap.setStyles({
-						'height': (self.length+offset) * animconRegion.height / self.colspan + 'px'
-					});
-
-				},
 				'hSlide':function(){
 					//统一容器和item的宽高及选中默认值
 					var animconRegion = self.animcon.get('region');
-					self.animwrap.setStyles({
+					self.animwrap.css({
 						'width': (self.length+offset) * animconRegion.width / self.colspan + 'px'
 					});
-				},
-				'fade':function(){
 				}
 
 			};
@@ -507,14 +403,14 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		//渲染textarea中的内容，并放在与之相邻的一个div中，若有脚本，执行其中脚本
 		renderLazyData:function(textarea){
 			var self = this;
-			textarea.setStyle('display','none');
+			textarea.css('display','none');
 			if(textarea.attr('lazy-data')=='1'){
 				return ;
 			}
 			textarea.attr('lazy-data','1');
 			var	id = S.stamp(div),
-				html = textarea.get('innerHTML').replace(/&lt;/ig,'<').replace(/&gt;/ig,'>'),
-				div = S.Node.create('<div>'+html+'</div>');
+				html = textarea.html().replace(/&lt;/ig,'<').replace(/&gt;/ig,'>'),
+				div = S.Node('<div>'+html+'</div>');
 			S.DOM.insertBefore(div,textarea);
 			//textarea.insertBefore(div);
 			S.execScript(html);
@@ -532,10 +428,10 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		buildWrap: function(){
 			var self = this;
 
-			self.animwrap = S.Node.create('<div style="position:absolute;"></div>');
-			self.animwrap.set('innerHTML', self.animcon.get('innerHTML'));
-			self.animcon.set('innerHTML', '');
-			self.animcon.appendChild(self.animwrap);
+			self.animwrap = S.Node('<div style="position:absolute;"></div>');
+			self.animwrap.html(self.animcon.html());
+			self.animcon.html('');
+			self.animcon.append(self.animwrap);
 			self.pannels = self.con.all('.' + self.contentClass + ' div.' + self.pannelClass);
 
 			return self;
@@ -552,68 +448,28 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 				'none':function(){
 
 					self.pannels = self.con.all('.' + self.contentClass + ' div.' + self.pannelClass);
-					self.pannels.setStyles({
+					self.pannels.css({
 						display:'none'	
 					});
 
-					self.pannels.item(self.defaultTab).setStyles({
+					self.pannels.item(self.defaultTab).css({
 						'display':'block'	
 					});
 
 				},
-				'vSlide':function(){
-					self.buildWrap();
-					//统一容器和item的宽高及选中默认值
-					var animconRegion = self.animcon.get('region');
-					self.pannels.setStyles({
-						'float': 'none',
-						'overflow': 'hidden'
-					});
-					self.animwrap.setStyles({
-						'height': self.length * animconRegion.height / self.colspan + 'px',
-						'overflow': 'hidden',
-						'top': -1 * self.defaultTab * animconRegion.height + 'px'
-					});
-
-				},
-
 				'hSlide':function(){
 					self.buildWrap();
 					//统一容器和item的宽高及选中默认值
 					var animconRegion = self.animcon.get('region');
-					self.pannels.setStyles({
+					self.pannels.css({
 						'float': 'left',
 						'overflow': 'hidden'
 					});
-					self.animwrap.setStyles({
+					self.animwrap.css({
 						'width': self.length * animconRegion.width / self.colspan + 'px',
 						'overflow': 'hidden',
 						'left': -1 * self.defaultTab * animconRegion.width + 'px'
 					});
-				},
-				'fade':function(){
-
-					self.pannels = self.con.all('.' + self.contentClass + ' div.' + self.pannelClass);
-					self.pannels.setStyles({
-						'position': 'absolute',
-						'zIndex': 0
-					});
-					self.pannels.each(function(node, i){
-						if (i == self.defaultTab) {
-							//node.removeClass('hidden');
-							node.setStyles({
-								'opacity': 1,
-								'display': 'block'
-							});
-						} else {
-							//node.addClass('hidden');
-							node.setStyles({
-								'opacity':0,
-								'diaplay':'none'	
-							});
-						}
-					});
-
 				}
 
 			};
@@ -647,7 +503,7 @@ KISSY.add('gallery/app/1.4/slide',function(S){
                     }
                     t_str += '<li class="' + t_str_prefix + '"><a href="javascript:void(0);">' + (i + 1) + '</a></li>';
                 }
-                t_con.set('innerHTML', t_str);
+                t_con.html(t_str);
             }
             self.tabs = con.all('.' + self.navClass + ' '+self.triggerSelector);
             self.animcon = con.one('.' + self.contentClass);
@@ -678,7 +534,7 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			if(self.effect == 'hSlide'){
 				width /= self.colspan;
 			}
-			self.pannels.setStyles({
+			self.pannels.css({
 				width:width + 'px'
 			});
 			return this;
@@ -689,10 +545,7 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			var self = this;
 			//有可能animcon没有定义高度
 			var height = self.animcon.get('region').height;
-			if(self.effect == 'vSlide'){
-				height /= self.colspan;
-			}
-			self.pannels.setStyles({
+			self.pannels.css({
 				height:height + 'px'
 			});
 			return this;
@@ -709,13 +562,13 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			}
 
 			if(self.transitions){
-				self.animwrap.setStyles({
+				self.animwrap.css({
 					'-webkit-transition-duration': '0s',
 					'-webkit-transform':'translate3d('+(-1 * index * self.animcon.get('region').width)+'px,0,0)',
 					'-webkit-backface-visibility':'hidden'
 				});
 			}else{
-				self.animwrap.setStyles({
+				self.animwrap.css({
 					left: -1 * index * self.animcon.get('region').width
 					
 				});
@@ -763,9 +616,9 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			var body = S.one('body') , 
 				html = S.one('html') ,
 				size = type === 'auto' ? 'auto' : '100%';
-			body.setStyle('height' , size);
-			html.setStyle('height' , size);
-			this.animcon.setStyle('height' , size);
+			body.css('height' , size);
+			html.css('height' , size);
+			this.animcon.css('height' , size);
 			this.animcon.parent().height(size);
 		},
 		// timmer 是指的动态监控wrapperCon高度的定时器
@@ -787,7 +640,7 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 
 			var resetHeight = function(){
 				if(self.effect == 'hSlide'){
-					self.animcon.setStyles({
+					self.animcon.css({
 						height:self.pannels.item(self.currentTab).get('region').height+'px'
 					});
 				}
@@ -821,48 +674,22 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 
 				// pannels的高度是不定的，高度是根据内容
 				// 来撑开的因此不能设置高度，而宽度则需要设置
-				self.pannels.setStyles({
+				self.pannels.css({
 					width:width+'px',
 					display:'block'
 				});
 
-				self.animcon.setStyles({
+				self.animcon.css({
 					width:width * self.colspan +'px',
 					overflow:'hidden'
 				});
 
 				if(self.animWrapperAutoHeightSetting){
-					self.animcon.setStyles({
+					self.animcon.css({
 						height:height+'px'
 						//强制pannel的内容不超过动画容器的范围
 					});
 				}
-			}
-
-			if(self.effect == 'vSlide'){
-				width = self.pannels.item(index).get('region').width;
-				height = self.adaptive_height ? 
-										self.adaptive_height():
-										self.animcon.get('region').height;
-				height /= self.colspan;
-
-				self.pannels.setStyles({
-					height:height * self.colspan +'px',
-					display:'block'
-				});
-
-				self.animcon.setStyles({
-					height:height * self.colspan +'px',
-					overflow:'hidden'
-				});
-
-				if(self.animWrapperAutoHeightSetting){
-					self.animcon.setStyles({
-						width:width +'px'
-						//强制pannel的内容不超过动画容器的范围
-					});
-				}
-
 			}
 
 			return this;
@@ -895,31 +722,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		// 绑定默认事件
 		bindEvent:function(){
 			var self = this;
-			if(	S.inArray(self.eventType,['click','mouseover','mouseenter'] )) {
-				self.con._delegate(self.eventType,function(e){
-					e.halt();
-					var ti = Number(self.tabs.indexOf(e.currentTarget));
-					if(self.carousel){
-						ti = (ti + 1) % self.length;
-					}
-					self.go(ti);
-					if(self.autoSlide){
-						self.stop().play();
-					}
-				},'.'+self.navClass+' '+self.triggerSelector);
-			}
-
-			// 是否支持鼠标悬停停止播放
-			if(self.hoverStop){
-				self.con._delegate('mouseover',function(e){
-					//e.halt();
-					if(self.autoSlide)self.stop();
-				},'.'+self.contentClass+' div.'+self.pannelClass);
-				self.con._delegate('mouseout',function(e){
-					//e.halt();
-					if(self.autoSlide)self.play();
-				},'.'+self.contentClass+' div.'+self.pannelClass);
-			}
 
 			// 绑定窗口resize事件 
 			S.Event.on(window,'resize',function(e){
@@ -927,191 +729,13 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 				self.relocateCurrentTab();
 			});
 
-			// 绑定判断switch发生的时机
-			self.on('beforeSwitch',function(o){
-				if(this.layerSlide && this.isAming()){
-					return false;
-				}
-			});
-
 			//终端事件触屏事件绑定
 			// TODO 触屏设备目前和ie6的降级方案实现一样,目前没实现降级
 			// TODO 需要将触屏支持抽离出BSlide
+			/*
 			if ( 'ontouchstart' in document.documentElement ) {
-
-				if(!self.touchmove){
-					return this;
-				}
-
-				self.con._delegate('touchstart',function(e){
-					self.stop();
-					self.touching = true;
-					if(self.is_last() && self.carousel){
-						self.fix_next_carousel();
-					}
-					if(self.is_first() && self.carousel){
-						self.fix_pre_carousel();
-					}
-					self.startX = e.changedTouches[0].clientX;
-					self.startY = e.changedTouches[0].clientY;
-					self.animwrap.setStyles({
-						'-webkit-transition-duration': '0s'
-					});
-					self.startT = Number(new Date());//如果快速手滑，则掠过touchmove，因此需要计算时间
-				},'.'+self.contentClass); 
-
-				self.con._delegate('touchend',function(e){
-					self.touching = false;
-					var endX  = e.changedTouches[0].clientX;
-					var width = Number(self.animcon.get('region').width);
-					self.deltaX = Math.abs(endX - self.startX);//滑过的距离
-					var swipeleft = (Math.abs(endX) < Math.abs(self.startX));//是否是向左滑动
-					var swiperight = !swipeleft;
-					//判断是否在边界反滑动，true，出现了反滑动，false，正常滑动
-					var anti = self.carousel ? false : ( self.is_last() && swipeleft || self.is_first() && swiperight );
-
-					//复位
-					var reset = function(){
-						self.animwrap.setStyles({
-							'-webkit-transition-duration': (Number(self.speed) / 2) + 's',
-							'-webkit-transform':'translate3d('+(-1 * self.currentTab * self.animcon.get('region').width / self.colspan)+'px,0,0)'
-						});
-					};
-
-					//根据手势走向上一个或下一个
-					var goswipe = function(){
-						var colwidth = self.animcon.get('region').width / self.colspan;
-						var span = parseInt( (self.deltaX - colwidth / 2) / colwidth , 10);
-						// 滑动距离超过一帧
-						if(swipeleft){//下一帧
-							if(span >= 1 && self.length >2){
-								// TODO 这里将solspan设为大于1的值时，有时候会意外复位，复现条件未知
-								/*
-								console.log('currentTab:'+self.currentTab+' span:'+span);
-								*/
-								self.currentTab += span;
-								if(self.currentTab >= self.length - 1){
-									self.currentTab = self.length - 2;
-								}
-							}
-							self.next();
-						}else{//上一帧
-							if(span >= 1 && self.length > 2){
-								if(self.currentTab - span <= 0){
-									self.currentTab = 1;
-								}else{
-									self.currentTab += -1 * span;
-								}
-							}
-							self.previous();
-						}
-					};
-
-					//如果检测到是上下滑动，则复位并return
-					/*
-					if(self.isScrolling){
-						reset();
-						return;
-					}
-					*/
-
-					//如果滑动物理距离太小，则复位并return
-					//这个是避免将不精确的点击误认为是滑动
-					if(self.touchmove && self.deltaX < 30){
-						reset();
-						return;
-					}
-
-
-					if(		!anti && (
-								// 支持touchmove，跑马灯效果，任意帧，touchmove足够的距离
-								( self.touchmove && (self.deltaX > width / 3) ) ||
-								// 不支持touchmove，跑马灯
-								( !self.touchmove && self.carousel ) ||
-								// 正常tab，支持touchmove，横向切换
-								( !self.carousel && self.touchmove && self.effect == 'hSlide' ) || 
-								// 不支持touchmove，不支持跑马灯
-								( !self.touchmove && !self.carousel) ||
-								//快速手滑
-								( Number(new Date()) - self.startT < 550 )
-							)
-						
-						){
-
-							//根据根据手滑方向翻到上一页和下一页
-							goswipe();
-
-					}else{
-						//复位
-						reset();
-					}
-
-					if(self.autoSlide){
-						self.play();
-					}
-				},'.'+self.contentClass);
-
-
-				//处理手指滑动事件相关
-				if(self.touchmove){
-
-					// TODO 网页放大缩小时，距离计算有误差
-
-
-					self.con._delegate('touchmove',function(e){
-						// 确保单手指滑动，而不是多点触碰
-						if(e.touches.length > 1 ) return;
-
-
-						//deltaX > 0 ，右移，deltaX < 0 左移
-						self.deltaX = e.touches[0].clientX- self.startX; 
-
-						//判断是否在边界反滑动，true，出现了反滑动，false，正常滑动
-						var anti = ( self.is_last() && self.deltaX < 0 || self.is_first() && self.deltaX > 0 );
-
-						if(!self.carousel && self.effect == 'hSlide' && anti){
-							self.deltaX = self.deltaX / 3; //如果是边界反滑动，则增加阻尼效果
-						}
-
-						// 判断是否需要上下滑动页面
-
-
-						self.isScrolling = ( Math.abs(self.deltaX) < Math.abs(e.touches[0].clientY- self.startY) ) ? true: false;
-
-						if(!self.isScrolling){
-
-							// 阻止默认上下滑动事件
-							e.halt();
-
-							self.stop();
-							var width = Number(self.animcon.get('region').width / self.colspan);
-							var dic = self.deltaX - self.currentTab * width;
-
-							// 立即跟随移动
-							self.animwrap.setStyles({
-								'-webkit-transition-duration': '0s',
-								'-webkit-transform':'translate3d('+dic+'px,0,0)'
-							});
-
-						}
-						
-					},'.'+self.contentClass); 
-
-					// TODO 触屏设备中的AnimEnd事件的实现
-					self.animwrap.on('webkitTransitionEnd',function(){
-						
-						/*
-						self.fire('afterSwitch',{
-							index: index,
-							navnode: self.tabs.item(self.getWrappedIndex(index)),
-							pannelnode: self.pannels.item(index)
-							
-						});	
-						*/
-					}); 
-				}
-
 			}
+			*/
 
 			return this;
 
@@ -1133,261 +757,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		 *
 		 * */
 		
-		initLayer: function(){
-			var self = this;
-
-			// 在触屏设备中layer功能暂时去掉
-			// TODO 应当加上触屏支持
-			if ( 'ontouchstart' in document.documentElement ) {
-				return;
-			}
-
-			if(S.UA.ie > 0 && S.UA.ie < 9){
-				return;
-			}
-
-			// 过滤rel中的配置项
-			var SubLayerString = [
-				"durationin",
-				"easingin",
-				"durationout",
-				"easingout",
-				"delayin",
-				"delayout",
-				"slideindirection",
-				"slideoutdirection",
-				"offsetin",
-				"offsetout",
-				"alpha",
-				
-				"easeInStrong",
-				"easeOutStrong",
-				"easeBothStrong",
-				"easeNone",
-				"easeIn",
-				"easeOut",
-				"easeBoth",
-				"elasticIn",
-				"elasticOut",
-				"elasticBoth",
-				"backIn",
-				"backOut",
-				"backBoth",
-				"bounceIn",
-				"bounceOut",
-				"bounceBoth",
-				"left",
-				"top",
-				"right",
-				"bottom"
-			];
-
-			// sublay的默认配置项，参照文件顶部文档说明
-			var SubLayerConfig = {
-				"durationin":			1000,
-				"easingin":				'easeIn',
-				"durationout":			1000,
-				"easingout":			'easeOut',
-				"delayin":				300,
-				"delayout":				300,
-				"slideindirection":		'right',
-				"slideoutdirection":	'left',
-				"alpha":				true,	
-				"offsetin":				50,	
-				"offsetout":			50
-
-			};
-
-			// SubLayer 构造器,传入单个el，生成SubLayer对象
-			var SubLayer = function(el){
-
-				var that = this;
-				var _sublayer_keys = [];
-				
-				/*
-				S.each(SubLayerConfig,function(k,v){
-					_sublayer_keys.push(k);
-				});
-				*/
-
-				// 如果sublayer配置的书写格式不标准，则这里会报错
-				// TODO 错误捕捉处理
-				var json = el.attr('rel').replace(/"'/ig,'').replace(new RegExp('('+SubLayerString.join('|')+')',"ig"),'"$1"');
-
-				var o = S.JSON.parse('{'+json+'}');
-				
-				function setParam(def, key){
-					var v = o[key];
-					// null 是占位符
-					that[key] = (v === undefined || v === null) ? def : v;
-				}
-
-				
-				S.each(SubLayerConfig,setParam);
-
-				this.el = el;
-
-				// el.offset 计算高度不准确，不知为何，改用css()
-				// TODO 寻找原因
-				/*
-				this.left = el.offset().left;
-				this.top = el.offset().top;
-				*/
-				this.left = Number(el.css('left').replace('px',''));
-				this.top = Number(el.css('top').replace('px',''));
-
-				// sublayer.animIn()，某个sublayer的进入动画
-				this.animIn = function(){
-
-					var that = this;
-
-					// 记录进入偏移量和进入方向
-					var offsetIn = that.offsetin;
-					var inType = that.slideindirection;
-
-					// 动画开始之前的预处理
-					var prepareEl = {
-						left:function(){
-								 that.el.css({
-									 'left':that.left-offsetIn
-								 });
-							 },
-						top:function(){
-								that.el.css({
-									'top':that.top-offsetIn
-								});
-							},
-						right:function(){
-								  that.el.css({
-									  'left':that.left+offsetIn
-								  });
-							  },
-						bottom:function(){
-								   that.el.css({
-									   'top':that.top+offsetIn
-								   });
-							   }
-					};
-
-					prepareEl[inType]();
-
-					setTimeout(function(){
-
-
-						var SlideInEffectTo = {
-							left:	{
-										left:that.left// + offsetIn
-									},
-							top:	{
-										top:that.top// - offsetIn
-									},
-							bottom:	{
-										top:that.top// + offsetIn,
-									},
-							right:	{
-										left:that.left// - offsetIn
-									}
-						};
-
-
-
-						// 动画结束的属性
-						var to = {};
-
-						S.mix(to,SlideInEffectTo[inType]);
-
-						// 如果开启alpha，则从透明动画到不透明
-						if(that.alpha){
-							S.mix(to,{
-								opacity:1	
-							});
-						}
-
-
-						// 执行动画
-						S.Anim(that.el,to,that.durationin/1000,that.easingin,function(){
-							// TODO 动画结束后的回调事件
-							// 寻找最后的动画结束时间
-						}).run();
-						
-					},that.delayin);
-
-					if(that.alpha){
-						that.el.css({
-							opacity:0	
-						});
-					}
-
-
-				};
-				// TODO 仿效animIn来实现
-				this.animOut = function(){
-
-				};
-
-			};
-
-			self.sublayers = [];
-
-			self.pannels.each(function(node,index){
-
-				if(self.effect == 'vSlide'||self.effect == 'hSlide'){
-					node.css({
-						position:'relative'	
-					});
-				}
-
-				if(node.all('[alt="sublayer"]').length === 0){
-					self.sublayers[index] = [];
-					return;
-				}
-				if(self.sublayers[index] === undefined){
-					self.sublayers[index] = [];
-				}
-
-				node.all('[alt="sublayer"]').each(function(el,j){
-					self.sublayers[index].push(new SubLayer(el));
-				});
-				
-			});
-
-			self.on('beforeSwitch',function(o){
-				if(o.index === self.currentTab){
-					return false;
-				}
-				self.subLayerRunin(o.index);
-			});
-
-			self.on('beforeTailSwitch',function(o){
-				self.subLayerRunout(o.index);	
-			});
-
-		},
-
-		// 执行某一帧的进入动画
-		subLayerRunin : function(index){
-
-			var self = this;
-			
-			var a = self.sublayers[index];
-
-			S.each(a,function(o,i){
-				o.animIn();
-			});
-		},
-
-		// 执行某一帧的移出动画
-		subLayerRunout : function(index){
-			var self = this;
-
-			var a = self.sublayers[index];
-
-			S.each(a,function(o,i){
-				o.animOut();
-			});
-
-		},
-
 		// 构建BSlide全局参数列表
 		buildParam:function(o){
 
@@ -1449,12 +818,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 				self.defaultTab = Number(self.defaultTab) - 1; // 默认隐藏所有pannel
 			}
 
-			// 如果是跑马灯，则不考虑默认选中的功能，一律定位在第一页,且只能是左右切换的不支持上下切换
-			if(self.carousel){
-				self.defaultTab = self.colspan; //跑马灯显示的是真实的第二项
-				self.effect = 'hSlide';// TODO 目前跑马灯只支持横向滚动
-			}
-
 			self.currentTab = self.defaultTab;//0,1,2,3...
 
 			//判断是否开启了内置动画
@@ -1465,40 +828,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		//针对移动终端的跑马灯的hack
 		//index 移动第几个,0,1,2,3
 		fix_for_transition_when_carousel: function(index){
-			var self = this;
-			if(typeof index == 'undefined'){
-				index = 0;
-			}
-			var con = self.con;
-            self.animcon = self.con.one('.' + self.contentClass);
-			self.animwrap = self.animcon.one('div');
-			self.pannels = con.all('.' + self.contentClass + ' div.' + self.pannelClass);
-			if(self.effect == 'hSlide'){
-				var width = Number(self.animcon.get('region').width / self.colspan);
-				var height = Number(self.animcon.get('region').height);
-				self.animwrap.setStyle('width',self.pannels.size() * width + 2 * width);
-				var first = self.pannels.item(index).cloneNode(true);
-				var last = self.pannels.item(self.pannels.size()- 1 - index).cloneNode(true);
-				self.animwrap.append(first);
-				self.animwrap.prepend(last);
-				if(self.transitions){
-					//这步操作会手持终端中造成一次闪烁,待解决
-					self.animwrap.setStyles({
-						'-webkit-transition-duration': '0s',
-						'-webkit-transform':'translate3d('+(-1 * width * (index/2 + 1))+'px,0,0)',
-						'-webkit-backface-visibility':'hidden',
-						'left':'0'
-					});
-				}else {
-					self.animwrap.setStyle('left',-1 * width * (index/2 + 1));
-				}
-			}
-			//重新获取重组之后的tabs
-			self.pannels = con.all('.' + self.contentClass + ' div.' + self.pannelClass);
-			self.length = self.pannels.size();
-
-			return this;
-
 		},
 
 		// 是否在做动画过程中
@@ -1584,80 +913,13 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 		},
 		// 修正跑马灯结尾的滚动位置
 		fix_next_carousel:function(){
-			var self = this;
-
-			self.currentTab = self.colspan;
-			var con = self.con;
-			if(self.effect != 'none'){
-				self.pannels = con.all('.'+self.contentClass+' div.'+self.pannelClass);
-			}
-
-			//目标offset，'-234px'
-			var dic = '-' + Number(self.animcon.get('region').width ).toString()+'px';
-
-			if(self.effect == 'hSlide'){
-
-				if(self.transitions){
-					self.animwrap.setStyles({
-						'-webkit-transition-duration': '0s',
-						'-webkit-transform':'translate3d('+dic+',0,0)'
-					});
-
-				}else{
-					self.animwrap.setStyle('left',dic);
-				}
-			} else if (self.effect == 'vSlide'){
-				// 暂不支持纵向跑马灯的滚动
-
-			}
-
-			return;
-
 		},
 
 		// 修正跑马灯开始的滚动位置
 		fix_pre_carousel:function(){
-			var self = this;
-
-			// jayli 这里需要调试修正，继续调试
-			self.currentTab = self.length - 1 - self.colspan * 2 + 1;
-			var con = self.con;
-			if(self.effect != 'none'){
-				self.pannels = con.all('.'+self.contentClass+' div.'+self.pannelClass);
-			}
-			// 目标offset,是一个字符串 '-23px'
-			var dic = '-' + (Number(self.animcon.get('region').width / self.colspan) * (self.currentTab)).toString() + 'px';
-
-			if(self.effect == 'hSlide'){
-				if(self.transitions){
-					self.animwrap.setStyles({
-						'-webkit-transition-duration': '0s',
-						'-webkit-transform':'translate3d('+dic +',0,0)'
-					});
-
-				}else{
-					self.animwrap.setStyle('left',dic);
-				}
-			}else if (self.effect == 'vSlide'){
-				//竖向滚动暂时未实现
-
-			}
-
-			return;
-
 		},
 		//高亮显示第index(0,1,2,3...)个nav
 		hightlightNav:function(index){
-			var self = this;
-			// 同时是跑马灯，且一帧多元素，则不允许存在Nav
-			if(self.carousel && self.colspan > 1){
-				return this;
-			}
-			if(self.tabs.item(index)){
-				self.tabs.removeClass(self.selectedClass);
-				self.tabs.item(index).addClass(self.selectedClass);
-			}
-			return this;
 		},
 		//切换至index,这里的index为真实的索引
 		switch_to:function(index,callback){
@@ -1709,56 +971,21 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 			var animFn = {
 				'none':function(index){
 
-					self.pannels.setStyles({
+					self.pannels.css({
 						'display':'none'	
 					});
 
-					self.pannels.item(index).setStyles({
+					self.pannels.item(index).css({
 						'display':'block'	
 					});
 
 					afterSwitch();
 
 				},
-				'vSlide':function(index){
-
-					if(self.transitions){
-						self.animwrap.setStyles({
-							'-webkit-transition-duration': self.speed + 's',
-							'-webkit-transform':'translate3d(0,'+(-1 * index * self.animcon.get('region').height / self.colspan)+'px,0)',
-							'-webkit-backface-visibility':'hidden'
-						});
-						self.anim = S.Anim(self.animwrap,{
-							opacity:1
-						},self.speed,self.easing,function(){
-							afterSwitch();
-						});
-						self.anim.run();
-					} else {
-						/*
-						self.anim = new S.Anim({
-							node: self.animwrap,
-							to: {
-								top: -1 * index * self.animcon.get('region').height
-							},
-							easing: self.easing,
-							duration: self.speed
-						});
-						self.anim.run();
-						*/
-						self.anim = S.Anim(self.animwrap,{
-							top: -1 * index * self.animcon.get('region').height / self.colspan
-						},self.speed,self.easing,function(){
-							afterSwitch();
-						});
-						self.anim.run();
-					}
-
-				},
 				'hSlide':function(index){
 
 					if(self.transitions){
-						self.animwrap.setStyles({
+						self.animwrap.css({
 							'-webkit-transition-duration': self.speed + 's',
 							'-webkit-transform':'translate3d('+(-1 * index * self.animcon.get('region').width / self.colspan)+'px,0,0)',
 							'-webkit-backface-visibility':'hidden'
@@ -1779,42 +1006,6 @@ KISSY.add('gallery/app/1.4/slide',function(S){
 
 						self.anim.run();
 					}
-
-				},
-				'fade':function(index){
-					//重写fade效果逻辑
-					//modified by huya
-					var _curr = self.currentTab;
-
-					self.anim = S.Anim(self.pannels.item(index),{
-						opacity: 1
-					},self.speed,self.easing,function(){
-
-						self.pannels.item(_curr).setStyle('zIndex', 0);
-						self.pannels.item(index).setStyle('zIndex', 1);
-						self.pannels.item(_curr).setStyle('opacity', 0);
-						self.pannels.item(_curr).setStyles({
-							'display':'none'	
-						});
-						afterSwitch();
-						/*
-						self.fire('afterSwitch',{
-							index: index,
-							navnode: self.tabs.item(self.getWrappedIndex(index)),
-							pannelnode: self.pannels.item(index)
-						});
-						*/
-					});
-
-					//动画开始之前的动作
-					self.pannels.item(index).setStyles({
-						'display':'block'	
-					});
-					self.pannels.item(index).setStyle('opacity', 0);
-					self.pannels.item(_curr).setStyle('zIndex', 1);
-					self.pannels.item(index).setStyle('zIndex', 2);
-
-					self.anim.run();
 
 				}
 
@@ -1948,7 +1139,7 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 			value: 'none'  // none,next,prev
 		},
 		anim:{
-			value: true
+			value: 'hSlide' 
 		},
 		dataload:{
 			value: 'true'
@@ -2146,7 +1337,7 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 				self.slide = new Slide('MS',{
 					easing:'easeBoth',
 					autoSlide:false,
-					effect:self.get('anim')?'hSlide':'none',
+					effect:self.get('anim'),
 					touchmove:false,
 					adaptive_fixed_width:true,
 					contentClass:'MS-con',
@@ -2199,8 +1390,8 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 			var self = this;
 			var k = self.get('viewpath');
 			if(!S.isObject(this.MS.STORAGE[k])){
-				var myClass = function(){};
-				var myClass = S.Base.extend(myClass,S.Base);
+				// var myClass = function(){};
+				var myClass = S.Base.extend();
 				/*
 				S.augment(myClass,S.Base.Attribute,S.EventTarget);
 				*/
@@ -2607,8 +1798,8 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 					} else if (dir === 'forward') {
 						self.forward(path , param);	
 					} else {
-						// self.setRouteHash(path , param);
-						self.next(path,param);
+						self.setRouteHash(path , param);
+						// self.next(path,param);
 					}
 					// self.next(path);
 				}
@@ -3330,8 +2521,6 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 			if(!self.slide){
 				return;
 			}
-
-
 		}
 	});
 
@@ -3342,7 +2531,7 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 }, {
 	requires: [
 		'./slide',
-		'ajax',
+		'io',
 		'base'
 	]
 });
