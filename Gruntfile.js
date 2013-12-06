@@ -83,7 +83,7 @@ module.exports = function(grunt) {
 						cwd:'<%= pkg.version %>/',
 						src: [
 							'**/*.css',
-							'demo/**/*',
+							'!demo/**/*',
 							'!build/**/*.css'
 						], 
 						dest: '<%= pkg.version %>/build/', 

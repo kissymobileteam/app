@@ -3222,7 +3222,6 @@ KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 
 			var fullpath = self.getAjaxPath(decodeURIComponent(path));
 
-			self.loading();
 			if(fullpath.match(/http:/ig) && fullpath.match(/http:/ig).length >1){
 				fullpath = fullpath.replace(/^http:.+(http:.+)$/,'$1');
 			}

@@ -1246,7 +1246,6 @@ KISSY.add(function (S,Slide) {
 					break;
 				case 'next':
 					// TODO: 只有异步加载新页面时，才会修正进入view的marginTop
-					console.info('next');
 					self._fixScrollTopBefore(el,prel);
 					self.slide.add(el);
 					/**

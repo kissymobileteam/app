@@ -8,6 +8,7 @@ gallery/app/1.4/index
 
 */
 KISSY.add('gallery/app/1.4/util',function(S){
+
 	"use strict";
 
 	// Node 增补方法
@@ -2336,7 +2337,6 @@ KISSY.add('gallery/app/1.4/index',function (S,Slide) {
 					break;
 				case 'next':
 					// TODO: 只有异步加载新页面时，才会修正进入view的marginTop
-					console.info('next');
 					self._fixScrollTopBefore(el,prel);
 					self.slide.add(el);
 					/**
