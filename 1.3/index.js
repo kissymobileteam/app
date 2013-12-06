@@ -48,7 +48,7 @@ KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 			value: 'none'  // none,next,prev
 		},
 		anim:{
-			value: true
+			value: 'hSlide' 
 		},
 		dataload:{
 			value: 'true'
@@ -246,7 +246,7 @@ KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 				self.slide = new Slide('MS',{
 					easing:'easeBoth',
 					autoSlide:false,
-					effect:self.get('anim')?'hSlide':'none',
+					effect:self.get('anim'),
 					touchmove:false,
 					adaptive_fixed_width:true,
 					contentClass:'MS-con',
@@ -1323,7 +1323,9 @@ KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 			var fullpath = self.getAjaxPath(decodeURIComponent(path));
 
 			self.loading();
-			console.log('1');
+			if(fullpath.match(/http:/ig) && fullpath.match(/http:/ig).length >1){
+				fullpath = fullpath.replace(/^http:.+(http:.+)$/,'$1');
+			}
 
 			if(self.__post){
 				S.io.post(fullpath,self.__post,handleHTML);
