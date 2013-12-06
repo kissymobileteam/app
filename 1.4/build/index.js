@@ -8,7 +8,6 @@ gallery/app/1.4/index
 
 */
 KISSY.add('gallery/app/1.4/util',function(S){
-
 	"use strict";
 
 	// Node 增补方法
