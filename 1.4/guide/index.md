@@ -1,7 +1,6 @@
 ![](http://gtms01.alicdn.com/tps/i1/T1qDUCFfpaXXczH7HO-400-74.png)
 
-> Kissy Mobile App Toolkit 是一款实现web页面应用化的框架，可以快速完成"应用化"的web页面搭建
-> 除了专场动画的AppFramework之外，1.4 版还提供一套SDK规范，用以将你的页面运行于Native环境
+> Kissy Mobile App 是一款实现web页面应用化的框架，实现灵活配置的转场动画和View的解偶。
 
 扩展阅读：
 
@@ -10,8 +9,8 @@
 - 全面介绍：<https://speakerdeck.com/lijing00333/kissy-mobile-app-toolkit>
 - 第一版App：[MSlide](https://github.com/zhenn/mslide)
 - <del>第二版</del>，废弃，`mobile/1.2/`
-- [第三版](http://gallery.kissyui.com/app/1.3/guide/index.html)
-- Update 2013-12-05
+- [第三版](http://gallery.kissyui.com/app/1.3/guide/index.html)，基于`kissy`1.3
+- Update 2013-12-10
 - [Demo with SDK](../demo/sdk/demo.html)，[Source](https://github.com/jayli/app/tree/master/1.4/demo/sdk)
 - [Simple Demo](../demo/simple/mb.html)
 
@@ -23,17 +22,17 @@
 
 <strong>基于KISSY 1.4.x</strong>
 
-页面之间的切换是通过监听hashchange来实现的，如果带上sdk，则监听通过sdk完成，App 不监听view中的点击事件。最终触发跳转行为都是通过函数调用来完成。单个页面是一个独立的html片段，包含普通页面应当包含的所有特征，页面中的富应用交由页面开发者负责，包括模板、样式、初始化等。
+页面之间的切换是通过监听 hashchange 来实现的，框架会监听 view 中的点击（`click`）事件。最终触发跳转行为都是通过函数调用来完成。单个页面是一个独立的 html 片段，页面中的富应用交由页面开发者负责，包括模板、样式、初始化等。
 
 View的行为：
 
 ![](http://img02.taobaocdn.com/tps/i2/T1P7wFXXBeXXba_uLI-504-409.png)
 
-因此要区分“框架”和“view”。
+使用场景要区分“框架”和“view”。
 
 ### 全局框架初始化
 
-页面样式需要自行引入，页面正文都需要添加HTML代码：
+[参考页面](https://github.com/jayli/app/blob/master/1.4/demo/simple/mb.html)。页面正文都需要添加HTML代码：
 
 	<section id="MS"><!--控件所在的容器-->
 		<div class="MS-con"><!--页面内容所在的包裹器-->
@@ -69,7 +68,7 @@ JavaScript:
 
 	KISSY.use('gallery/app/1.4/',function(S,AppFramework){
 
-		"use strict";
+		"use strict"; // 可选
 
 		var app = AppFramework({
 			viewpath:'a.html', // 默认加载的页面地址
@@ -82,9 +81,42 @@ JavaScript:
 
 	});
 
-### 节点（WebView）的构造和析构
+#### 框架的（浏览器）兼容性
 
-在页面加载和销毁的全过程中，供包含五个事件，由于每个页面可能会被多次构造，开发者需要按照下文规范使用这五个方法。
+整套历史记录管理机制依赖HTML5的History特性，因此整套机制不支持IE8及以下版本，在Android 4.2 及以下版本中由于不支持H5的History，因此采用了简化的实现，即只处理了单层的前进后退。如果需要夸级别后退，需要自行管理app.MS.AndroidHis对象，改对象记录当前状态下曾经访问过的页面，只要回退到访问过的页面，都认为是从左侧划入视口。
+
+比如：有这样的访问路径，`a->b->c<-a`后，节点为`a->b->a`，这时需要手动清空`AppFramework.AndroidHis = {}`。Android 4.2 以下的后退时scrollTop复原的操作，需要开发者自行添加（框架不知道是否是后退还是人为）。
+
+节点重复、缓存等的实现原理：[参照这里](history.html)。
+
+### ``view` 的初始化（代码样例）
+
+View 本质上是独立的页面，Ajax 到框架时被渲染的部分为`<!--kdk{{-->`和`<!--kdk}}-->`之间的部分：
+
+	<script src="seed.js" /><!--kissy 种子文件-->
+	...
+	<!--kdk{{-->
+	<script>
+		KISSY.use('gallery/app/1.4/',function(S,AppFramework){
+
+			// 页面加载时执行
+			AppFramework.startup(function(){
+				alert('hello kissy mobile');
+			});
+
+			// 退出页面时执行
+			AppFramework.teardown(function(){
+				alert('goodbye kissy mobile');	
+			});
+			
+		});
+	</script>
+	<!--正文-->
+	<!--kdk}}-->
+
+#### View 的构造和析构
+
+在View加载和销毁的全过程中，供包含五个事件，由于每个页面可能会被多次构造，开发者需要按照下文规范使用这五个方法。
 
 <table class="table table-bordered">
 <tr style="font-weight:bold;">
@@ -153,26 +185,6 @@ JavaScript:
 </tr>
 </table>
 
-view 中的代码样例：
-
-	<script src="seed.js" /><!--kissy 种子文件-->
-	...
-	<script>
-		KISSY.use('gallery/app/1.4/',function(S,AppFramework){
-
-			// 页面加载时执行
-			AppFramework.startup(function(){
-				alert('hello kissy mobile');
-			});
-
-			// 退出页面时执行
-			AppFramework.teardown(function(){
-				alert('goodbye kissy mobile');	
-			});
-			
-		});
-	</script>
-
 加载时这几个事件的执行顺序：
 
 includeOnce -> startup -> ready
@@ -181,27 +193,19 @@ includeOnce -> startup -> ready
 
 teardown -> destroy
 
-### 节点重复问题
+#### 节点重复问题
 
-因为每个页面如果可能出现重复的情况，则不推荐使用`id`选择器。
+View可以被反复加载，原因参照[history.html](history.html)，因此一般不推荐使用`id`选择器。
 
-这种场景只有在给AppFramework配置了`forcereload:false`时才有可能出现，即当Mobile App Toolkit被配置为只保留当前视口内的页面，视口范围外的页面均被销毁时，此外是不需要考虑这种场景的。
+重复View的场景只有在给AppFramework配置了`forcereload:false`时才有可能出现，即当Mobile App被配置为只保留当前视口内的页面，视口范围外的页面均被销毁时，此外是不需要考虑这种场景的。
 
 ![](http://img03.taobaocdn.com/tps/i3/T1TYQGXlxcXXbu1N2d-351-311.png)
 
-### 页面的缓存
+#### View 的缓存
 
 页面默认是以异步形式加载进来的，加载过的页面可以缓存在本地，二次划入时不需重新加载，给AppFramework配置参数`pagecache:true`即可，该参数默认为`false`。
 
-### 兼容性
-
-整套历史记录管理机制依赖HTML5的History特性，因此整套机制不支持IE8及以下版本，在Android 4.2 及以下版本中由于不支持H5的History，因此采用了简化的实现，即只处理了单层的前进后退。如果需要夸级别后退，需要自行管理app.MS.AndroidHis对象，改对象记录当前状态下曾经访问过的页面，只要回退到访问过的页面，都认为是从左侧划入视口。
-
-比如：有这样的访问路径，`a->b->c<-a`后，节点为`a->b->a`，这时需要手动清空`AppFramework.AndroidHis = {}`。Android 4.2 以下的后退时scrollTop复原的操作，需要开发者自行添加（框架不知道是否是后退还是人为）。
-
-节点重复、缓存等的实现原理：[参照这里](history.html)。
-
-### 异步载入的页面（view）里的js执行顺序
+#### 异步载入的页面（view）里的js执行顺序
 
 由于view是通过Ajax载入的，view中如果有外联js（文件），将不会被阻塞执行，因此要尽可能使用KISSY Loader来载入view中外联JS。
 
@@ -211,7 +215,7 @@ teardown -> destroy
 
 ### 单页场景和多页场景在网页内容上的交集
 
-单页面中的一段内容会被AppFramework拿出来解析，注释过滤方法为：
+单页面中的一段内容会被 AppFramework 拿出来解析，注释过滤方法为：
 
 ![](http://img01.taobaocdn.com/tps/i1/T11co5XlRfXXaUhmbj-178-97.jpg)
 
@@ -515,11 +519,13 @@ back如果涉及到新页面的加载，则以get方式载入
 
 ## SDK
 
+本节内容属于最佳实践：
+
+如果你的程序被运行在多终端的多种场景中，则H5和Native之间需要约定互通协议，这里的SDK是一种最简单的思路。
+
 - What：SDK 是对AppFramework的封装，提供一些典型的方法调用，实现了更加通用的view。这种view被设计运行于三种典型场景
 - How：[sdk-h5.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h5.js)，[sdk-h4.js](http://a.tbcdn.cn/s/kissy/gallery/app/1.4/demo/sdk/h4.js)，（参考）
-- Why：让H5页面在不修改和少修改情况下，就可以运行于浏览器和Native环境中。
-
-注意：SDK 是一种思路，不是最终解决方案。
+- Why：让H5页面在不修改和少修改情况下，就可以运行于浏览器和Native环境中
 
 三种典型的场景：
 
