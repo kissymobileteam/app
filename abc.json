@@ -1,9 +1,9 @@
 {
     "name": "app",
-    "version": "1.3",
-    "desc": "",
-    "cover": "",
-    "tag":"",
+    "version": "1.4",
+    "desc": "KISSY Mobile App：WebView 转场动画框架",
+    "cover": "http://img04.taobaocdn.com/tps/i4/T1IuoMXgNaXXaZVCTS-300-100.png",
+    "tag":"mobile",
     "author": {
         "name": "bachi@taobao.com",
         "email": "bachi@taobao.com",

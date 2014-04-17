@@ -1,4 +1,4 @@
-KISSY.add('mobile/app/1.3/util',function(S){
+KISSY.add('gallery/app/1.3/util',function(S){
 
 	"use strict";
 

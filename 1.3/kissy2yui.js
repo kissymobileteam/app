@@ -1,6 +1,6 @@
 /*jshint browser:true,devel:true */
 
-KISSY.add('mobile/app/1.3/kissy2yui',function(S){
+KISSY.add('gallery/app/1.3/kissy2yui',function(S){
 
 	// "use strict";
 

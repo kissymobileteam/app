@@ -8,7 +8,7 @@
 
 /*jshint smarttabs:true,browser:true,devel:true,sub:true,evil:true */
 
-KISSY.add("mobile/app/1.3/index", function (S,Slide) {
+KISSY.add("gallery/app/1.3/index", function (S,Slide) {
 
 	// Jayli TODO: Android下未完全测试
 
@@ -48,7 +48,7 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 			value: 'none'  // none,next,prev
 		},
 		anim:{
-			value: true
+			value: 'hSlide' 
 		},
 		dataload:{
 			value: 'true'
@@ -246,7 +246,7 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 				self.slide = new Slide('MS',{
 					easing:'easeBoth',
 					autoSlide:false,
-					effect:self.get('anim')?'hSlide':'none',
+					effect:self.get('anim'),
 					touchmove:false,
 					adaptive_fixed_width:true,
 					contentClass:'MS-con',
@@ -717,6 +717,10 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 				var state = self.get('signet');
 				var level = 0;
 				var viewpath = decodeURIComponent(S.getHash()['viewpath']);
+
+				if(viewpath === undefined || viewpath === 'undefined'){
+					viewpath = state.lastviewpath;
+				}
 
 				self.set('viewpath',viewpath);
 
@@ -1319,7 +1323,9 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 			var fullpath = self.getAjaxPath(decodeURIComponent(path));
 
 			self.loading();
-			console.log('1');
+			if(fullpath.match(/http:/ig) && fullpath.match(/http:/ig).length >1){
+				fullpath = fullpath.replace(/^http:.+(http:.+)$/,'$1');
+			}
 
 			if(self.__post){
 				S.io.post(fullpath,self.__post,handleHTML);
@@ -1431,8 +1437,8 @@ KISSY.add("mobile/app/1.3/index", function (S,Slide) {
 }, {
 	requires: [
 		'./slide',
-		'base',
-		'ajax'
+		'ajax',
+		'base'
 	]
 });
 

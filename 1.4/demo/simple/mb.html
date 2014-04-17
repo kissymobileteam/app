@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<!--[if lt IE 7]><html class="no-js ie ie6 lte9 lte8 lte7"> <![endif]-->
+<!--[if IE 7]><html class="no-js ie ie7 lte9 lte8 lte7"> <![endif]-->
+<!--[if IE 8]><html class="no-js ie ie8 lte9 lte8"> <![endif]-->
+<!--[if IE 9]><html class="no-js ie ie9 lte9"> <![endif]-->
+<!--[if gt IE 9]><html class="no-js"><![endif]-->
+<!--[if !IE]><!--><html><!--<![endif]-->
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="stylesheet" href="assets/bootstrap.css" />
+	<script src="http://g.tbcdn.cn/kissy/k/1.4.0/seed.js" type="text/javascript"></script>
+	<script>
+	</script>
+
+
+</head>
+<body>
+
+<style>
+	#MS {
+		position:relative;
+		width:100%;
+		margin:0 auto;
+	}
+	#MS-nav {
+		display:none;
+	}
+	.MS-con {
+		position:relative;
+	}
+	.MS-pal {
+		float:left;
+		position:relative;
+		-webkit-backface-visibility:hidden;
+	}
+
+	.mt0 {
+		margin-top:0px !important;
+		height:300px !important;
+	}
+
+</style>
+
+
+<div id="MS">
+	<div class="MS-con">
+		<div class="MS-pal">
+			loading...
+		</div>
+	</div>
+</div>
+
+<style>
+	#test {
+		position:fixed;
+		top:0;
+		left:0;
+		background:yellow;
+	}
+
+</style>
+<div id="test">
+	fixed
+</div>
+<div id="log" style="position:fixed;top:0;right:0;background:white;">kkk</div>
+
+
+<script>
+var app = {};
+var NS = {};
+	KISSY.use('gallery/app/1.4/',function(S,MS){
+		app = MS({
+			viewpath:'mb/a.html',
+			forceReload:true,
+			anim:true,
+			fullRangeWidth:false,
+			pageCache:true,
+			webkitOptimize:true,
+			positionMemory:true,
+			animWrapperAutoHeightSetting:false //  默认为true
+			/*
+			initPostData:{
+				a:1,b:2
+			}
+			*/
+		});
+		NS = app;
+		app.loading();
+	});
+
+
+
+</script>
+
+</body>
+</html>
